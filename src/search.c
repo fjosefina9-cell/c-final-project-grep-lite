@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "search.h"
+#include "match.h"
 
 int search_file(const char *pattern, const char *filename) {
-	(void)pattern; //temporary fix for error
-
+ 
     FILE *file = fopen(filename, "r");
 
     if (file == NULL) {
@@ -15,8 +15,9 @@ int search_file(const char *pattern, const char *filename) {
     char line[1024];
 
     while (fgets(line, sizeof(line), file) != NULL) {
-       
-	 /* TODO: search logic later */
+       if (match_line(line, pattern, 0, 0)) {
+		printf("%s", line);
+	}
     }
 
     fclose(file);
