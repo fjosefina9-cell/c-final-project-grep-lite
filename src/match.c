@@ -40,8 +40,7 @@ int match_line(const char *line, const char *pattern,
     while ((pos = strstr(pos, search_pat)) != NULL) {
 
         if (flag_w) {
-            int left_ok  = (pos == search_line) ||
-                           !is_word_char(*(pos - 1));
+            int left_ok  = (pos == search_line) || !is_word_char(*(pos - 1));
             int right_ok = !is_word_char(*(pos + pat_len));
 
             if (left_ok && right_ok) return 1;

@@ -3,3 +3,6 @@ this is a test
 grep-lite project
 hello again test
 nothing here 
+helloagain
+sayhello
+
