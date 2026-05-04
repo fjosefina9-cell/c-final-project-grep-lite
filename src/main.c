@@ -1,22 +1,21 @@
 #include <stdio.h>
+#include "args.h"
+#include "search.h"
 
 int main(int argc, char *argv[]) {
-    (void)argc;
-    (void)argv;
+	struct Args args;
 
-    FILE *file = fopen("data/test.txt", "r");
-
-    if (file == NULL) {
-        printf("Error opening file\n");
-        return 1;
-    }
-
-    char line[256];
-
-    while (fgets(line, sizeof(line), file)) {
-        printf("%s", line);
-    }
-
-    fclose(file);
-    return 0;
+    if (parse_args( argc, argv, &args) != 0) {
+	printf("Usage: %s [-i] [-w]  PATTERN FILE\n", argv[0]);
+	return 1;
 }
+
+
+
+
+return search_file(args.pattern, args.filename,
+			args.ignore_case, args.whole_word);
+
+}
+
+    
