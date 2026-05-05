@@ -8,8 +8,5 @@ SRC = src/main.c src/args.c src/search.c src/match.c
 all:
 	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
 
-run: all
-	./$(TARGET)
-
 clean:
 	rm -f $(TARGET)
