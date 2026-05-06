@@ -2,53 +2,49 @@
 #include <ctype.h>
 #include "match.h"
 
-static void to_lower_str(const char *src, char *dst, int dst_size) {
-    int i;
-    for (i = 0; i < dst_size - 1 && src[i] != '\0'; i++) {
-        dst[i] = (char)tolower((unsigned char)src[i]);
-    }
-    dst[i] = '\0';
-}
-
-static int is_word_char(char c) {
-    return isalnum((unsigned char)c) || c == '_';
-}
-
 int match_line(const char *line, const char *pattern,
                int flag_i, int flag_w) {
 
-    char low_line[4096];
-    char low_pat[256];
+    int i, j;
+    int line_len = strlen(line);
+    int pat_len = strlen(pattern);
 
-    const char *search_line;
-    const char *search_pat;
-
-    if (flag_i) {
-        to_lower_str(line,    low_line, sizeof(low_line));
-        to_lower_str(pattern, low_pat,  sizeof(low_pat));
-        search_line = low_line;
-        search_pat  = low_pat;
-    } else {
-        search_line = line;
-        search_pat  = pattern;
-    }
-
-    size_t pat_len = strlen(search_pat);
+    /* if pattern is empty, match everything */
     if (pat_len == 0) return 1;
 
-    const char *pos = search_line;
-    while ((pos = strstr(pos, search_pat)) != NULL) {
+    /* loop through every position in the line */
+    for (i = 0; i <= line_len - pat_len; i++) {
 
-        if (flag_w) {
-            int left_ok  = (pos == search_line) || !is_word_char(*(pos - 1));
-            int right_ok = !is_word_char(*(pos + pat_len));
+        int found = 1;
 
-            if (left_ok && right_ok) return 1;
-        } else {
-            return 1;
+        /* check if pattern matches at position i */
+        for (j = 0; j < pat_len; j++) {
+            char lc = line[i + j];
+            char pc = pattern[j];
+
+            /* if -i flag, ignore case */
+            if (flag_i) {
+                lc = tolower(lc);
+                pc = tolower(pc);
+            }
+
+            if (lc != pc) {
+                found = 0;
+                break;
+            }
         }
 
-        pos++;
+        /* if we found the pattern */
+        if (found) {
+
+            /* if -w flag, check word boundaries */
+            if (flag_w) {
+                if (i > 0 && isalnum(line[i - 1])) continue;
+                if (i + pat_len < line_len && isalnum(line[i + pat_len])) continue;
+            }
+
+            return 1;
+        }
     }
 
     return 0;
